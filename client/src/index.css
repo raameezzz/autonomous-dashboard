@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #root { height: 100%; }
+body {
+  font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  color: #0F172A;
+  background: #F8F9FA;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: #EEF0F3;
+}
+.skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+  transform: translateX(-100%);
+  animation: shimmer 1.4s infinite;
+}
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
+}
+
+/* Recharts overrides */
+.recharts-cartesian-axis-tick text { fill: #64748B; font-size: 12px; }
+.recharts-default-tooltip { border-radius: 8px !important; border: 1px solid #E5E7EB !important; box-shadow: 0 8px 24px rgba(15,23,42,0.08) !important; }
