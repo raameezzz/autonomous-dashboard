@@ -6,6 +6,7 @@ import CSATTrendChart from '../components/CSATTrendChart';
 import { PerformanceTable, RatingCoverageTable } from '../components/EngineerTables';
 import RecentConversations from '../components/RecentConversations';
 import TopicsBreakdown from '../components/TopicsBreakdown';
+import MenuBar from '../components/MenuBar';
 import { useDashboardData } from '../hooks/useDashboardData';
 import { DateRange } from '../types';
 import { api } from '../api/client';
@@ -105,30 +106,42 @@ export default function Dashboard({ user, onLogout }: Props) {
         onLogout={onLogout}
       />
 
+      <MenuBar />
+
       <main className="max-w-[1440px] mx-auto px-6 py-6 space-y-6">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          {cards.map((c) => (
-            <MetricCard
-              key={c.label}
-              label={c.label}
-              value={c.value}
-              delta={c.delta}
-              loading={initialLoading}
-              hint={c.hint}
-              deltaSuffix={c.isPercentDelta ? '%' : 'pt'}
-            />
-          ))}
-        </div>
+        <section id="overview" className="space-y-6 scroll-mt-20">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            {cards.map((c) => (
+              <MetricCard
+                key={c.label}
+                label={c.label}
+                value={c.value}
+                delta={c.delta}
+                loading={initialLoading}
+                hint={c.hint}
+                deltaSuffix={c.isPercentDelta ? '%' : 'pt'}
+              />
+            ))}
+          </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <ChatVolumeChart data={data?.chatVolume ?? []} loading={initialLoading} />
-          <CSATTrendChart data={data?.csatTrend ?? []} loading={initialLoading} />
-        </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <ChatVolumeChart data={data?.chatVolume ?? []} loading={initialLoading} />
+            <CSATTrendChart data={data?.csatTrend ?? []} loading={initialLoading} />
+          </div>
+        </section>
 
-        <PerformanceTable agents={data?.agentStats ?? []} loading={initialLoading} />
-        <RatingCoverageTable agents={data?.agentStats ?? []} loading={initialLoading} />
-        <RecentConversations range={range} />
-        <TopicsBreakdown range={range} />
+        <section id="engineers" className="space-y-6 scroll-mt-20">
+          <PerformanceTable agents={data?.agentStats ?? []} loading={initialLoading} />
+          <RatingCoverageTable agents={data?.agentStats ?? []} loading={initialLoading} />
+        </section>
+
+        <section id="conversations" className="scroll-mt-20">
+          <RecentConversations range={range} />
+        </section>
+
+        <section id="topics" className="scroll-mt-20">
+          <TopicsBreakdown range={range} />
+        </section>
       </main>
 
       {toast && (
