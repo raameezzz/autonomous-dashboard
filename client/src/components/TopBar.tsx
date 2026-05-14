@@ -1,27 +1,14 @@
-import { useState } from 'react';
 import DateRangePicker from './DateRangePicker';
 import { DateRange } from '../types';
 
 interface Props {
   range: DateRange;
   onRangeChange: (r: DateRange) => void;
-  onConnectIntercom: (token: string) => void;
-  intercomConfigured: boolean;
   user?: { email: string } | null;
   onLogout?: () => void;
 }
 
-export default function TopBar({
-  range,
-  onRangeChange,
-  onConnectIntercom,
-  intercomConfigured,
-  user,
-  onLogout,
-}: Props) {
-  const [modalOpen, setModalOpen] = useState(false);
-  const [token, setToken] = useState('');
-
+export default function TopBar({ range, onRangeChange, user, onLogout }: Props) {
   return (
     <header className="bg-white border-b border-surface-border">
       <div className="max-w-[1440px] mx-auto px-6 py-4 flex items-center gap-6">
@@ -47,17 +34,6 @@ export default function TopBar({
 
         <DateRangePicker value={range} onChange={onRangeChange} />
 
-        <button
-          onClick={() => setModalOpen(true)}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
-            intercomConfigured
-              ? 'bg-white text-ink border border-surface-border hover:bg-surface-page'
-              : 'bg-brand text-white hover:bg-brand-600'
-          }`}
-        >
-          {intercomConfigured ? 'Reconnect Intercom' : 'Connect Intercom'}
-        </button>
-
         {user && (
           <div className="flex items-center gap-3 pl-3 border-l border-surface-border">
             <div className="w-8 h-8 rounded-full bg-brand-100 text-brand flex items-center justify-center font-semibold text-xs">
@@ -72,46 +48,6 @@ export default function TopBar({
           </div>
         )}
       </div>
-
-      {modalOpen && (
-        <div className="fixed inset-0 z-50 bg-ink/40 flex items-center justify-center p-4">
-          <div className="bg-white rounded-card shadow-xl w-full max-w-md p-6 border border-surface-border">
-            <h2 className="text-lg font-semibold text-ink">Connect Intercom</h2>
-            <p className="text-sm text-ink-muted mt-1">
-              Paste your Intercom Access Token. The server will use it for live data.
-            </p>
-            <input
-              type="password"
-              value={token}
-              onChange={(e) => setToken(e.target.value)}
-              placeholder="dG9rZW46..."
-              className="mt-4 w-full px-3 py-2 border border-surface-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand"
-            />
-            <div className="mt-2 text-xs text-ink-subtle">
-              Get one at <span className="font-mono">app.intercom.com → Developer Hub → Authentication</span>
-            </div>
-            <div className="mt-5 flex justify-end gap-2">
-              <button
-                onClick={() => setModalOpen(false)}
-                className="px-4 py-2 text-sm text-ink-muted hover:text-ink"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => {
-                  onConnectIntercom(token.trim());
-                  setModalOpen(false);
-                  setToken('');
-                }}
-                disabled={!token.trim()}
-                className="px-4 py-2 rounded-lg bg-brand text-white text-sm font-medium hover:bg-brand-600 disabled:opacity-50"
-              >
-                Save
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </header>
   );
 }

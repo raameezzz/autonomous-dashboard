@@ -25,7 +25,6 @@ export type ClosedFilter = 'all' | 'rated' | 'csat' | 'dsat';
 
 export const api = {
   health: () => request<{ ok: boolean; ts: number }>('/api/health'),
-  config: () => request<{ intercom_configured: boolean; anthropic_configured: boolean }>('/api/config'),
 
   login: (email: string, password: string) =>
     request<{ ok: boolean; user: { email: string } }>('/api/auth/login', {

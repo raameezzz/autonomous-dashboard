@@ -9,7 +9,6 @@ import TopicsBreakdown from '../components/TopicsBreakdown';
 import MenuBar from '../components/MenuBar';
 import { useDashboardData } from '../hooks/useDashboardData';
 import { DateRange } from '../types';
-import { api } from '../api/client';
 
 function defaultRange(): DateRange {
   const now = new Date();
@@ -36,12 +35,7 @@ interface Props {
 export default function Dashboard({ user, onLogout }: Props) {
   const [range, setRange] = useState<DateRange>(defaultRange);
   const { data, loading, error } = useDashboardData(range);
-  const [intercomConfigured, setIntercomConfigured] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
-
-  useEffect(() => {
-    api.config().then((c) => setIntercomConfigured(c.intercom_configured)).catch(() => {});
-  }, []);
 
   useEffect(() => {
     if (error) {
@@ -97,11 +91,6 @@ export default function Dashboard({ user, onLogout }: Props) {
       <TopBar
         range={range}
         onRangeChange={setRange}
-        onConnectIntercom={() => {
-          setToast('Save token in your .env file as INTERCOM_ACCESS_TOKEN, then restart the server.');
-          setTimeout(() => setToast(null), 6000);
-        }}
-        intercomConfigured={intercomConfigured}
         user={user}
         onLogout={onLogout}
       />
