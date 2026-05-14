@@ -1,4 +1,4 @@
-import { ClosedConversation, DashboardResponse, TopicsResponse } from '../types';
+import { ClosedConversation, ConversationListResponse, DashboardResponse, MetricKey, TopicsResponse } from '../types';
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(path, {
@@ -44,4 +44,9 @@ export const api = {
 
   topics: (start: string, end: string) =>
     request<TopicsResponse>(`/api/topics?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`),
+
+  conversationsList: (metric: MetricKey, start: string, end: string) =>
+    request<ConversationListResponse>(
+      `/api/conversations/list?metric=${metric}&start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`,
+    ),
 };

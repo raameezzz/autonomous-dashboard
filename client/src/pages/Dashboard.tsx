@@ -10,12 +10,19 @@ import MenuBar from '../components/MenuBar';
 import { useDashboardData } from '../hooks/useDashboardData';
 import { DateRange } from '../types';
 
+function fmtLocal(d: Date): string {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
 function defaultRange(): DateRange {
   const now = new Date();
   const start = new Date(now.getFullYear(), now.getMonth(), 1);
   return {
-    start: start.toISOString().slice(0, 10),
-    end: now.toISOString().slice(0, 10),
+    start: fmtLocal(start),
+    end: fmtLocal(now),
     label: 'This month',
   };
 }
@@ -48,6 +55,7 @@ export default function Dashboard({ user, onLogout }: Props) {
   const m = data?.metrics;
   const initialLoading = loading && !data;
 
+  const rangeQuery = `?start=${encodeURIComponent(range.start)}&end=${encodeURIComponent(range.end)}`;
   const cards = useMemo(() => ([
     {
       label: 'Total Chats',
@@ -55,6 +63,7 @@ export default function Dashboard({ user, onLogout }: Props) {
       delta: m?.total_chats_delta,
       hint: 'vs. previous period',
       isPercentDelta: true,
+      to: `/chats/total${rangeQuery}`,
     },
     {
       label: 'CSAT %',
@@ -62,6 +71,7 @@ export default function Dashboard({ user, onLogout }: Props) {
       delta: m?.csat_pct_delta,
       hint: 'rated 4–5',
       isPercentDelta: false,
+      to: `/chats/csat${rangeQuery}`,
     },
     {
       label: 'DSAT %',
@@ -69,6 +79,7 @@ export default function Dashboard({ user, onLogout }: Props) {
       delta: m ? -1 * m.dsat_pct_delta : undefined,
       hint: 'rated 1–3',
       isPercentDelta: false,
+      to: `/chats/dsat${rangeQuery}`,
     },
     {
       label: 'Time to first reply',
@@ -76,6 +87,7 @@ export default function Dashboard({ user, onLogout }: Props) {
       delta: m ? -1 * m.avg_response_time_delta : undefined,
       hint: 'bot transfer → first reply · target 2:00',
       isPercentDelta: true,
+      to: `/chats/frt${rangeQuery}`,
     },
     {
       label: 'Resolution Rate',
@@ -83,8 +95,9 @@ export default function Dashboard({ user, onLogout }: Props) {
       delta: m?.resolution_rate_delta,
       hint: 'closed / total',
       isPercentDelta: true,
+      to: `/chats/unresolved${rangeQuery}`,
     },
-  ]), [m]);
+  ]), [m, rangeQuery]);
 
   return (
     <div className="min-h-screen bg-surface-page">
@@ -109,6 +122,7 @@ export default function Dashboard({ user, onLogout }: Props) {
                 loading={initialLoading}
                 hint={c.hint}
                 deltaSuffix={c.isPercentDelta ? '%' : 'pt'}
+                to={c.to}
               />
             ))}
           </div>

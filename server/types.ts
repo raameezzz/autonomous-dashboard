@@ -55,6 +55,30 @@ export interface ClosedConversation {
   category: 'csat' | 'dsat' | 'neutral' | 'unrated';
 }
 
+export type MetricKey = 'total' | 'csat' | 'dsat' | 'frt' | 'unresolved';
+
+export interface ConversationListItem {
+  id: string;
+  created_at: number;
+  closed_at: number | null;
+  state: string;
+  assignee_id: string | null;
+  assignee_name: string | null;
+  rating: number | null;
+  remark: string | null;
+  first_response_time: number | null;
+  resolution_time: number | null;
+  summary: string | null;
+}
+
+export interface ConversationListResponse {
+  metric: MetricKey;
+  start: string;
+  end: string;
+  total: number;
+  items: ConversationListItem[];
+}
+
 export interface DashboardMetrics {
   total_chats: number;
   total_chats_delta: number;

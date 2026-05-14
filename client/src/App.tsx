@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
+import ConversationList from './pages/ConversationList';
 import { api } from './api/client';
 
 type AuthState = { status: 'loading' } | { status: 'in'; user: { email: string } } | { status: 'out' };
@@ -23,6 +24,11 @@ export default function App() {
     );
   }
 
+  const handleLogout = async () => {
+    try { await api.logout(); } catch { /* ignore */ }
+    setAuth({ status: 'out' });
+  };
+
   return (
     <Routes>
       <Route
@@ -33,20 +39,15 @@ export default function App() {
             : <Login onAuthed={(email) => setAuth({ status: 'in', user: { email } })} />
         }
       />
-      <Route
-        path="/*"
-        element={
-          auth.status === 'in'
-            ? <Dashboard
-                user={auth.user}
-                onLogout={async () => {
-                  try { await api.logout(); } catch { /* ignore */ }
-                  setAuth({ status: 'out' });
-                }}
-              />
-            : <Navigate to="/login" replace />
-        }
-      />
+      {auth.status === 'in' ? (
+        <>
+          <Route path="/" element={<Dashboard user={auth.user} onLogout={handleLogout} />} />
+          <Route path="/chats/:metric" element={<ConversationList />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </>
+      ) : (
+        <Route path="*" element={<Navigate to="/login" replace />} />
+      )}
     </Routes>
   );
 }

@@ -9,7 +9,8 @@ import {
   getCachedClosedConversations,
 } from '../services/intercom';
 import { getTopicsForRange } from '../services/topics';
-import { DashboardResponse, IntercomConversationSummary } from '../types';
+import { conversationCache } from '../services/db';
+import { DashboardResponse, IntercomConversationSummary, MetricKey, ConversationListItem, ConversationListResponse } from '../types';
 
 const router = Router();
 
@@ -141,6 +142,70 @@ router.get('/conversations/closed', async (req: Request, res: Response) => {
     res.json(merged);
   } catch (err) {
     console.error('[/api/conversations/closed]', err);
+    res.status(500).json({ error: (err as Error).message });
+  }
+});
+
+router.get('/conversations/list', async (req: Request, res: Response) => {
+  try {
+    const { start, end } = parseRange(req);
+    const teamId = process.env.INTERCOM_TEAM_ID;
+    const rawMetric = String(req.query.metric ?? 'total');
+    const allowed: MetricKey[] = ['total', 'csat', 'dsat', 'frt', 'unresolved'];
+    if (!allowed.includes(rawMetric as MetricKey)) {
+      res.status(400).json({ error: `Invalid metric '${rawMetric}'. Expected one of: ${allowed.join(', ')}` });
+      return;
+    }
+    const metric = rawMetric as MetricKey;
+
+    const all = await fetchConversations(start, end, teamId);
+
+    let filtered = all;
+    if (metric === 'csat') {
+      filtered = all.filter((c) => c.csat_rating != null && c.csat_rating >= 4);
+    } else if (metric === 'dsat') {
+      filtered = all.filter((c) => c.csat_rating != null && c.csat_rating <= 3);
+    } else if (metric === 'unresolved') {
+      filtered = all.filter((c) => c.state !== 'closed' && c.resolution_time == null);
+    }
+    // 'total' and 'frt' keep the full set; sort below.
+
+    if (metric === 'frt') {
+      filtered.sort((a, b) => (b.first_response_time ?? -1) - (a.first_response_time ?? -1));
+    } else {
+      filtered.sort((a, b) => (b.created_at ?? 0) - (a.created_at ?? 0));
+    }
+
+    // Attach cached summary where present — never trigger a fresh Intercom detail fetch here
+    // since this endpoint may return hundreds of rows and per-row enrichment would be slow.
+    const cached = new Map(conversationCache.getMany(filtered.map((c) => c.id)).map((r) => [r.id, r]));
+    const items: ConversationListItem[] = filtered.map((c) => {
+      const d = cached.get(c.id);
+      return {
+        id: c.id,
+        created_at: c.created_at,
+        closed_at: c.closed_at,
+        state: c.state,
+        assignee_id: c.assignee_id,
+        assignee_name: c.assignee_name,
+        rating: c.csat_rating ?? d?.rating ?? null,
+        remark: c.csat_remark ?? d?.remark ?? null,
+        first_response_time: c.first_response_time,
+        resolution_time: c.resolution_time,
+        summary: d?.summary ?? null,
+      };
+    });
+
+    const body: ConversationListResponse = {
+      metric,
+      start: start.toISOString().slice(0, 10),
+      end: end.toISOString().slice(0, 10),
+      total: items.length,
+      items,
+    };
+    res.json(body);
+  } catch (err) {
+    console.error('[/api/conversations/list]', err);
     res.status(500).json({ error: (err as Error).message });
   }
 });
