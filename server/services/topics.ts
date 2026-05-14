@@ -44,13 +44,13 @@ const RULES: Rule[] = [
   },
   {
     name: 'Plan & scaling',
-    description: 'Plan upgrades/downgrades, Enterprise, autoscaling, pod sizing, account changes, free-trial gating',
-    re: /\b(upgrade|downgrade)\b.*\b(plan|tier|enterprise|pods?|autoscal)|\b(autoscal|scaling)\b|\benterprise plan\b|\bgrowth plan\b|\bscale plan\b|\bautonomous plan\b.*\b(upgrade|move|switch)|\bpods?\b|\bremove (the )?flexible (server|app)\b|\bretain only the autonomous\b|\bplan limit\b|\bquota\b|\binsufficient resources?\b|\bfree trial\b|\bautonomous packages?\b|\badd (an? )?autonomous (site|account)|\bmanaging multiple .* applications?\b|\brestauración\b/i,
+    description: 'Plan upgrades/downgrades, Enterprise, autoscaling, pod sizing, account changes, free-trial gating, capacity planning',
+    re: /\b(upgrade|downgrade)\b.*\b(plan|tier|enterprise|pods?|autoscal)|\b(autoscal|scaling)\b|\benterprise plan\b|\bgrowth plan\b|\bscale plan\b|\bautonomous plan\b.*\b(upgrade|move|switch)|\bpods?\b|\bremove (the )?flexible (server|app)\b|\bretain only the autonomous\b|\bplan limit\b|\bquota\b|\binsufficient resources?\b|\bfree trial\b|\bautonomous packages?\b|\badd (an? )?autonomous (site|account)|\bmanaging multiple .* applications?\b|\brestauración\b|\bSafeUpdate\b|\b(pause|paused|deactivate|deactivated)\b.*\b(site|server|app|application)\b|\b(site|server|app|application)\b.*\b(pause|paused|deactivate|deactivated)\b|\bsite load preparation\b|\bload preparation\b|\bconcurrent (users?|logins?)\b|\bsimultaneous(ly)?\b.*\b(users?|login)\b|\b(prepare|prepared|preparation|handle)\b.*\b\d{2,5}\b.*\busers?\b|\b\d{2,5}\b.*\busers?\b.*\b(login|simultaneous|concurrent|prepar|handle)\b/i,
   },
   {
     name: 'Billing & usage',
     description: 'Overage, unexpected charges, visit-count discrepancies, bandwidth visibility, usage stats',
-    re: /\b(billing|invoice|charge|charges|overage|refund|payment|credit card|prorat|subscription)\b|\bcost(s)? (estimation|comparison)|\bGA4\b|\busage (stat|data)|\bbandwidth\b.*\b(consum|usage|charge|overage)|\bvisit count|\bbilled visit|\bincrease.* bandwidth|\bunexpected (cost|charge|billing)|\bincreased costs?|\bbilled \$/i,
+    re: /\b(billing|invoice|charge|charges|overage|refund|payment|credit card|prorat|subscription)\b|\bcost(s)? (estimation|comparison)|\bGA4\b|\busage (stat|data)|\bbandwidth\b.*\b(consum|usage|charge|overage)|\bconsum(e|ing|ed)\b.*\bbandwidth\b|\bvisit count|\bbilled visit|\bincrease.* bandwidth|\bunexpected (cost|charge|billing)|\bincreased costs?|\bbilled \$|\b(pending|failed?) .{0,15}(card|payment) authoriz|\bcard authoriz|\bpayment authoriz|\bupgrade .*account\b.*\b(domain|card|fail|pending)\b/i,
   },
   {
     name: 'Access & credentials',
@@ -69,8 +69,8 @@ const RULES: Rule[] = [
   },
   {
     name: 'Email & SMTP',
-    description: 'Elastic Mail/Email deliverability, suppression lists, SMTP configuration',
-    re: /\bSMTP\b|\bemail (deliver|configur|delivery|spf|dkim|dmarc)|\bmailgun\b|\brackspace email|\belastic (mail|email)|\bemail .*(bounc|not (sending|delivering)|suppress|suspend)|\bmail deliverability|\bemail suppress/i,
+    description: 'Elastic Mail/Email deliverability, suppression lists, SMTP configuration, send/receive failures',
+    re: /\bSMTP\b|\bemail (deliver|configur|delivery|spf|dkim|dmarc)|\bmailgun\b|\brackspace email|\belastic (mail|email)|\bemail .*(bounc|not (sending|delivering)|suppress|suspend)|\bmail deliverability|\bemail suppress|\bpassword reset emails?\b|\b(unable|can(?:no|'?)t) to? ?send.*emails?\b|\bemails?.*\b(not (working|sending|received|delivered|delivering))\b|\b(notification|deliver|delivery|deliverability)\b.*\bemails?\b|\bemails?\b.*\b(deliver|delivery|deliverability)\b|\binconsistent .*emails?\b/i,
   },
   {
     name: 'Database',
@@ -79,13 +79,13 @@ const RULES: Rule[] = [
   },
   {
     name: 'Security & whitelist',
-    description: 'Cloudflare WAF rules, IP whitelisting, Imunify360, Malware Protection, bot/geo-block, compromises',
-    re: /\b(whitelist|allowlist|block(ing)? (ip|china|country|traffic|bots?)|firewall (rule|whitelist)|imunify360|malware protection|malware infection|bot (protection|attack|blocking)|brute[- ]force|geo[- ]?block|rate[- ]?limit|fail2ban|wp-?admin .*(restrict|whitelist|secure)|IP (rule|restriction|whitelist)|cloudflare (firewall|custom rules?|rule|WAF|admin (access )?rules?|under attack mode)|access denied by|compromise|site compromise|hack(ed)?|unauthorized .*modifications?|malicious traffic|vulnerability scan|update.* webcore.* malware|turnstile|bandwidth spike.*bot|allow IPs?)\b/i,
+    description: 'Cloudflare WAF rules, IP whitelisting, Imunify360, Malware Protection, bot/geo-block, compromises, audit/abuse',
+    re: /\bwhitelist|\ballowlist|\bblock(ing|ed)? (a |an |the |specific )?(ip|china|country|traffic|bots?|address)|\bblock(ing|ed)? .{0,40}\b(ip|address)\b|\bbloqueo de tr[aá]fico|\bfirewall (rule|whitelist|restriction)|\bblocked by .{0,20}firewall|\bfirewall .{0,20}(block|restrict)|\bimunify360|\bmalware protection|\bmalware infection|\bbot (protection|attack|blocking)|\bbrute[- ]force|\bgeo[- ]?block|\brate[- ]?limit|\bfail2ban|\bwp-?admin .*(restrict|whitelist|secure)|\bIP (rule|restriction|whitelist)|\bcloudflare('s)? .{0,5}(firewall|custom rules?|rule|WAF|admin (access )?rules?|under attack mode)|\bunder attack mode\b|\baccess denied by|\bcompromise|\bsite compromise|\bhack(ed)?\b|\bunauthorized .*modifications?|\bmalicious traffic|\bvulnerability scan|\bupdate.* webcore.* malware|\bturnstile|\bbandwidth spike.*bot|\ballow IPs?|\b(IPv4|IPv6)\b|\baccess logs?\b.*\b(review|sensitive|expos|audit)\b|\b(sensitive|publicly accessible)\b.*\bfiles?\b|\babuse issue\b|\bsecurity\/abuse\b|\bspam attack\b|\bblock(ing|ed)? .*(spam|attack)\b/i,
   },
   {
     name: 'Caching & Redis',
     description: 'Redis/Relay, Object Cache Pro, Breeze, Varnish, WP Rocket, Cloudflare cache, cache conflicts',
-    re: /\b(redis|relay|object ?cache ?pro|objectcache\b|breeze|varnish|wp[- ]?rocket|cloudflare cache|cache (conflict|purge|clear|extension|delay|issue)|purge .*cache|cache .*purge|caching (delay|issue|conflict|configuration|problems?)|filestore cach|cdn cach|disable caching|server-?level cache|clearing.* cache|cache .*not clearing)/i,
+    re: /\b(redis|relay|object ?cache ?pro|objectcache\b|breeze|varnish|wp[- ]?rocket|cloudflare cach(e|ing)|cache (conflict|purge|clear|extension|delay|issue)|purge .*cache|cache .*purge|caching (delay|issue|conflict|configuration|problems?)|filestore cach|cdn cach|disable .{0,25}cach(e|ing)|server-?level cache|clearing.* cache|cache .*not clearing)/i,
   },
   {
     name: 'Performance & slowness',
@@ -94,18 +94,18 @@ const RULES: Rule[] = [
   },
   {
     name: 'Site downtime / errors',
-    description: 'Site unreachable, 5xx, frozen NGINX, "can\'t be reached," intermittent timeouts',
-    re: /\b(down|downtime|unreachable|offline|inaccessible|outage|crash(ed)?|froze(n)?|nginx error|err_connection|site can(?:'|no)t be reached|not loading|stopped working|not working|displayed an error|524\b|504\b|502\b|503\b|500\b|intermittent timeout|website was down|site was down|no cargaba|no carga|sito.* down|sito.* lent|無法連接|無法登入|เว็บค้าง|เซิร์ฟเวอร์ล่ม|quedas|tela preta|inaccesible)/i,
+    description: 'Site unreachable, 5xx, frozen NGINX, "can\'t be reached," intermittent / frequent timeouts',
+    re: /\b(down|downtime|unreachable|offline|inaccessible|outage|crash(ed)?|froze(n)?|nginx error|err_connection|site can(?:'|no)t be reached|not loading|stopped working|not working|displayed an error|524\b|504\b|502\b|503\b|500\b|intermittent timeout|frequent .{0,15}timeouts?|site timeouts?|recurring timeouts?|website was down|site was down|no cargaba|no carga|sito.* down|sito.* lent|無法連接|無法登入|เว็บค้าง|เซิร์ฟเวอร์ล่ม|quedas|tela preta|inaccesible)/i,
   },
   {
     name: 'WordPress / WooCommerce',
     description: 'Plugin/theme issues, 404s, wp-admin crashes, wp-cron, fatal errors, OG/SEO, multisite',
-    re: /\b(wp-?admin|wordpress|woocommerce|woo |plugin (error|conflict|update|missing|not working|deactivat|deletion|delete)|theme (error|conflict|update)|wp-?cron|cron (job|hook|schedule)|404\b|403\b|fatal error|php (error|fatal|warning|notice)|all-in-one wp migration|elementor|og (thumbnail|graph)|seo|gutenberg|update wordpress|disable plugin|wordfence|memberpress|buddyboss|learndash|simple banner|tickera|child pages?|custom post type|staging.*publish|publishing changes from staging|blank cart|critical errors? on post|newsletter campaign.*error)/i,
+    re: /\b(wp-?admin|wordpress|woocommerce|woo |plugin (error|conflict|update|missing|not working|deactivat|deletion|delete)|theme (error|conflict|update)|wp-?cron|cron (job|hook|schedule)|404\b|403\b|fatal error|php (error|fatal|warning|notice)|all-in-one wp migration|elementor|og[\s)]+\(?(thumbnail|graph)|open ?graph|seo|gutenberg|update wordpress|disable plugin|wordfence|memberpress|buddyboss|learndash|simple banner|tickera|child pages?|custom post type|staging.*publish|publishing changes from staging|blank cart|critical errors? on post|newsletter campaign.*error)/i,
   },
   {
     name: 'Server admin & ops',
     description: 'Disk/logs, debug-log accumulation, redirect rules, .htaccess, backup/restore, PHP config, Apache/Nginx',
-    re: /\b(disk (space|usage|full)|debug log|logs? folder|logs? accumulat|wc-?logs|redirect (rule|from|to)|server-?level rule|http 410|\.htaccess|nginx (config|rule)|apache (config|rule)|increase .*(memory|limit)|server readiness|server upgrade|server config|server-side cron|action scheduler|backup (folder|creation|restore|frequency)|restore from.* backup|access .*application logs|application logs|export.* (logs?|data)|openresty|web server|PHP-?FPM|content-?length|PHP (post|version)|composer|meilisearch|forwarding|better stack)/i,
+    re: /\b(disk (space|usage|full)|debug log|logs? folder|logs? accumulat|wc-?logs|redirect(ing|s|ed)? (rule|from|to)|redirect(ing|s|ed)? to .*(site|domain|url)|old .*(site|domain).*redirect|server-?level rule|http 410|\.htaccess|nginx (config|rule)|apache (config|rule)|increase .*(memory|limit)|server readiness|server upgrade|server config|server-side cron|action scheduler|backup (folder|creation|restore|frequency)|restore from.* backup|access .*application logs|application logs|export.* (logs?|data)|openresty|web server|PHP-?FPM|content-?length|PHP (post|version)|composer|meilisearch|forwarding|better stack)/i,
   },
 ];
 
