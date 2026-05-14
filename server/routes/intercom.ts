@@ -8,6 +8,7 @@ import {
   getCSATTrendByWeek,
   getCachedClosedConversations,
 } from '../services/intercom';
+import { getTopicsForRange } from '../services/topics';
 import { DashboardResponse, IntercomConversationSummary } from '../types';
 
 const router = Router();
@@ -140,6 +141,22 @@ router.get('/conversations/closed', async (req: Request, res: Response) => {
     res.json(merged);
   } catch (err) {
     console.error('[/api/conversations/closed]', err);
+    res.status(500).json({ error: (err as Error).message });
+  }
+});
+
+router.get('/topics', async (req: Request, res: Response) => {
+  try {
+    const { start, end } = parseRange(req);
+    const teamId = process.env.INTERCOM_TEAM_ID;
+    if (!teamId) {
+      res.status(500).json({ error: 'INTERCOM_TEAM_ID is not configured' });
+      return;
+    }
+    const topics = await getTopicsForRange(start, end, teamId);
+    res.json(topics);
+  } catch (err) {
+    console.error('[/api/topics]', err);
     res.status(500).json({ error: (err as Error).message });
   }
 });

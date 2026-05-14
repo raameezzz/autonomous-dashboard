@@ -5,6 +5,7 @@ import ChatVolumeChart from '../components/ChatVolumeChart';
 import CSATTrendChart from '../components/CSATTrendChart';
 import { PerformanceTable, RatingCoverageTable } from '../components/EngineerTables';
 import RecentConversations from '../components/RecentConversations';
+import TopicsBreakdown from '../components/TopicsBreakdown';
 import { useDashboardData } from '../hooks/useDashboardData';
 import { DateRange } from '../types';
 import { api } from '../api/client';
@@ -127,6 +128,7 @@ export default function Dashboard({ user, onLogout }: Props) {
         <PerformanceTable agents={data?.agentStats ?? []} loading={initialLoading} />
         <RatingCoverageTable agents={data?.agentStats ?? []} loading={initialLoading} />
         <RecentConversations range={range} />
+        <TopicsBreakdown range={range} />
       </main>
 
       {toast && (

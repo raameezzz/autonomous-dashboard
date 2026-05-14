@@ -56,3 +56,20 @@ export interface DateRange {
   end: string;
   label: string;
 }
+
+export interface TopicCategory {
+  name: string;
+  description: string;
+  count: number;
+  percent: number;
+  example_ids: string[];
+}
+
+export interface TopicsResponse {
+  start: string;
+  end: string;
+  total_closed: number;
+  total_categorized: number;
+  categories: TopicCategory[];
+  generated_at: number;
+}

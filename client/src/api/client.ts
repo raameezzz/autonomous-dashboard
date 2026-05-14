@@ -1,4 +1,4 @@
-import { ClosedConversation, DashboardResponse } from '../types';
+import { ClosedConversation, DashboardResponse, TopicsResponse } from '../types';
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(path, {
@@ -42,4 +42,7 @@ export const api = {
     request<ClosedConversation[]>(
       `/api/conversations/closed?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}&filter=${filter}&limit=${limit}`,
     ),
+
+  topics: (start: string, end: string) =>
+    request<TopicsResponse>(`/api/topics?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`),
 };
