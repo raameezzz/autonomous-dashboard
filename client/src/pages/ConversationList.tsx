@@ -128,7 +128,7 @@ export default function ConversationList() {
   return (
     <div className="min-h-screen bg-surface-page">
       <header className="bg-white border-b border-surface-border">
-        <div className="max-w-[1440px] mx-auto px-6 py-4 flex items-center gap-4">
+        <div className="px-6 py-4 flex items-center gap-4">
           <button
             onClick={() => navigate('/')}
             className="text-sm text-ink-muted hover:text-ink flex items-center gap-1"
@@ -148,7 +148,7 @@ export default function ConversationList() {
         </div>
       </header>
 
-      <main className="max-w-[1440px] mx-auto px-6 py-6">
+      <main className="px-6 py-6">
         {error && (
           <div className="px-3 py-2 mb-4 rounded-md bg-rose-50 border border-rose-200 text-sm text-rose-700">
             {error}

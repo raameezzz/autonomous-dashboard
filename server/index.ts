@@ -5,6 +5,7 @@ import session from 'express-session';
 import authRouter, { requireAuth } from './routes/auth';
 import intercomRouter from './routes/intercom';
 import evalsRouter from './routes/evals';
+import mixpanelRouter from './routes/mixpanel';
 
 const app = express();
 const PORT = Number(process.env.PORT ?? 3001);
@@ -36,6 +37,7 @@ app.get('/api/config', (_req, res) =>
 app.use('/api/auth', authRouter);
 app.use('/api', requireAuth, intercomRouter);
 app.use('/api', requireAuth, evalsRouter);
+app.use('/api', requireAuth, mixpanelRouter);
 
 if (process.env.NODE_ENV === 'production') {
   const clientDir = path.resolve(__dirname, '../client');

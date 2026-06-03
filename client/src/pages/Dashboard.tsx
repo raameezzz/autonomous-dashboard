@@ -34,12 +34,7 @@ function fmtMinSec(seconds: number): string {
   return `${m}:${String(s).padStart(2, '0')}`;
 }
 
-interface Props {
-  user: { email: string };
-  onLogout: () => void;
-}
-
-export default function Dashboard({ user, onLogout }: Props) {
+export default function Dashboard() {
   const [range, setRange] = useState<DateRange>(defaultRange);
   const { data, loading, error } = useDashboardData(range);
   const [toast, setToast] = useState<string | null>(null);
@@ -102,15 +97,15 @@ export default function Dashboard({ user, onLogout }: Props) {
   return (
     <div className="min-h-screen bg-surface-page">
       <TopBar
+        title="Intercom Analytics"
+        liveLabel="Live · Intercom"
         range={range}
         onRangeChange={setRange}
-        user={user}
-        onLogout={onLogout}
       />
 
       <MenuBar />
 
-      <main className="max-w-[1440px] mx-auto px-6 py-6 space-y-6">
+      <main className="px-6 py-6 space-y-6">
         <section id="overview" className="space-y-6 scroll-mt-20">
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
             {cards.map((c) => (

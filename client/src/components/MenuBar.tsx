@@ -38,7 +38,7 @@ export default function MenuBar() {
 
   return (
     <nav className="sticky top-0 z-30 bg-white/90 backdrop-blur border-b border-surface-border">
-      <div className="max-w-[1440px] mx-auto px-6">
+      <div className="px-6">
         <ul className="flex items-center gap-1 h-12">
           {SECTIONS.map((s) => {
             const isActive = active === s.id;

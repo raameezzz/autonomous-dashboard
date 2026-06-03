@@ -1,4 +1,4 @@
-import { ClosedConversation, ConversationListResponse, DashboardResponse, MetricKey, TopicsResponse } from '../types';
+import { AutonomousSnapshot, ClosedConversation, ConversationListResponse, DashboardResponse, MetricKey, TopicsResponse } from '../types';
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(path, {
@@ -49,4 +49,6 @@ export const api = {
     request<ConversationListResponse>(
       `/api/conversations/list?metric=${metric}&start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`,
     ),
+
+  autonomous: () => request<AutonomousSnapshot>('/api/mixpanel/autonomous'),
 };

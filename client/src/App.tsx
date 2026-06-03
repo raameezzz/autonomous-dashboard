@@ -3,6 +3,8 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import ConversationList from './pages/ConversationList';
+import AutonomousCustomers from './pages/AutonomousCustomers';
+import Sidebar from './components/Sidebar';
 import { api } from './api/client';
 
 type AuthState = { status: 'loading' } | { status: 'in'; user: { email: string } } | { status: 'out' };
@@ -29,25 +31,30 @@ export default function App() {
     setAuth({ status: 'out' });
   };
 
+  if (auth.status !== 'in') {
+    return (
+      <Routes>
+        <Route
+          path="/login"
+          element={<Login onAuthed={(email) => setAuth({ status: 'in', user: { email } })} />}
+        />
+        <Route path="*" element={<Navigate to="/login" replace />} />
+      </Routes>
+    );
+  }
+
   return (
-    <Routes>
-      <Route
-        path="/login"
-        element={
-          auth.status === 'in'
-            ? <Navigate to="/" replace />
-            : <Login onAuthed={(email) => setAuth({ status: 'in', user: { email } })} />
-        }
-      />
-      {auth.status === 'in' ? (
-        <>
-          <Route path="/" element={<Dashboard user={auth.user} onLogout={handleLogout} />} />
+    <div className="flex min-h-screen">
+      <Sidebar user={auth.user} onLogout={handleLogout} />
+      <div className="flex-1 min-w-0">
+        <Routes>
+          <Route path="/login" element={<Navigate to="/" replace />} />
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/autonomous-customers" element={<AutonomousCustomers />} />
           <Route path="/chats/:metric" element={<ConversationList />} />
           <Route path="*" element={<Navigate to="/" replace />} />
-        </>
-      ) : (
-        <Route path="*" element={<Navigate to="/login" replace />} />
-      )}
-    </Routes>
+        </Routes>
+      </div>
+    </div>
   );
 }

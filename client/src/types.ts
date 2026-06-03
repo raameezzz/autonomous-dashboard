@@ -97,3 +97,33 @@ export interface ConversationListResponse {
   total: number;
   items: ConversationListItem[];
 }
+
+export type MixpanelGroup = 'users' | 'revenue' | 'churn' | 'applications' | 'lifecycle' | 'csat';
+
+export interface MixpanelMetric {
+  key: string;
+  label: string;
+  value: number;
+  format: 'number' | 'currency' | 'percent';
+  hint?: string;
+  group: MixpanelGroup;
+  row?: number;
+}
+
+export interface MixpanelBreakdown {
+  key: string;
+  label: string;
+  rows: Array<{ label: string; value: number }>;
+  group: MixpanelGroup;
+}
+
+export interface AutonomousSnapshot {
+  source: {
+    project_id: number;
+    dashboard_id: number;
+    dashboard_title: string;
+    captured_at: string;
+  };
+  metrics: MixpanelMetric[];
+  breakdowns: MixpanelBreakdown[];
+}
